@@ -74,7 +74,30 @@ read_matrix:
     sw t1, 0(s3)     # saves num rows
     sw t2, 0(s4)     # saves num cols
 
-    # mul s1, t1, t2   # s1 is number of elements
+
+    addi sp, sp, -28
+    sw ra, 0(sp)
+    sw a0, 4(sp)
+    sw a1, 8(sp)
+    sw t0, 12(sp)
+    sw t1, 16(sp)
+    sw t2, 20(sp)
+    sw t3, 24(sp)
+    mv a0, t1
+    mv a1, t2
+
+    j multiply
+mul_done:
+    mv s1, a0
+    lw ra, 0(sp)
+    lw a0, 4(sp)
+    lw a1, 8(sp)
+    lw t0, 12(sp)
+    lw t1, 16(sp)
+    lw t2, 20(sp)
+    lw t3, 24(sp)
+    addi sp, sp, 28
+    
     # FIXME: Replace 'mul' with your own implementation
 
     slli t3, s1, 2
@@ -143,3 +166,25 @@ error_exit:
     lw s4, 20(sp)
     addi sp, sp, 40
     j exit
+
+
+
+multiply:
+    li t0, 0 # t0: store result
+    mv t1, a0
+    mv t2, a1
+
+mul_loop:
+    beqz t2, done
+    andi t3, t2, 1
+    beqz t3, skip
+    add t0, t0, t1
+
+skip:
+    slli t1, t1, 1
+    srli t2, t2, 1
+    j mul_loop
+
+done:
+    mv a0, t0
+    j mul_done
