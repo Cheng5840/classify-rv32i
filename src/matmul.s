@@ -61,8 +61,8 @@ matmul:
     
 outer_loop_start:
     #s0 is going to be the loop counter for the rows in A
-    li s1, 0
-    mv s4, a3
+    li s1, 0    # s1: inner loop index
+    mv s4, a3   # s4: mem address of B
     blt s0, a1, inner_loop_start
 
     j outer_loop_end
@@ -77,7 +77,7 @@ inner_loop_start:
 #   a4 (int)  is the stride of arr1 = for B, stride = len(rows) - 1
 # Returns:
 #   a0 (int)  is the dot product of arr0 and arr1
-    beq s1, a5, inner_loop_end
+    beq s1, a5, inner_loop_end  #s1: inner loop idx
 
     addi sp, sp, -24
     sw a0, 0(sp)
@@ -116,6 +116,25 @@ inner_loop_start:
     
 inner_loop_end:
     # TODO: Add your own implementation
+    addi s0, s0, 1 # outer loop idx ++
+    mul t0, s0, a2
+    slli t0, t0, 2
+    add s3, a0, t0 #address of curecnt value of m0
+    j outer_loop_start
+    
+
+outer_loop_end:
+    
+    lw ra, 0(sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    lw s2, 12(sp)
+    lw s3, 16(sp)
+    lw s4, 20(sp)
+    lw s5, 24(sp)
+    addi sp, sp, 28
+
+    jr ra
 
 error:
     li a0, 38
