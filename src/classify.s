@@ -166,7 +166,24 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s8)
-    # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+
+############ mul start ###############
+    li a0, 0
+
+mul_loop1:
+    beqz t1, done1
+    andi t2, t1, 1
+    beqz t2, skip1
+    add a0, a0, t0
+
+skip1:
+    slli t0, t0, 1
+    srli t1, t1, 1
+    j mul_loop1
+
+done1:
+############ mul end ###############
+    #mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -203,6 +220,23 @@ classify:
     mv a0, s9 # move h to the first argument
     lw t0, 0(s3)
     lw t1, 0(s8)
+
+    ############ mul start ###############
+    li a1, 0
+
+mul_loop2:
+    beqz t1, done2
+    andi t2, t1, 1
+    beqz t2, skip2
+    add a1, a1, t0
+
+skip2:
+    slli t0, t0, 1
+    srli t1, t1, 1
+    j mul_loop2
+
+done2:
+    ############ mul end ###############
     # mul a1, t0, t1 # length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
     
@@ -226,7 +260,23 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s6)
-    # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    ########### mul start ##############
+    li a0, 0 # t0: store result
+
+mul_loop3:
+    beqz t1, done3
+    andi t2, t1, 1
+    beqz t2, skip3
+    add a0, a0, t0
+
+skip3:
+    slli t0, t0, 1
+    srli t1, t1, 1
+    j mul_loop3
+
+done3:
+########### mul end ###############
+    #mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -286,7 +336,24 @@ classify:
     mv a0, s10 # load o array into first arg
     lw t0, 0(s3)
     lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
+
+########### mul start ##############
+    li a1, 0 # t0: store result
+
+mul_loop4:
+    beqz t1, done4
+    andi t2, t1, 1
+    beqz t2, skip4
+    add a1, a1, t0
+
+skip4:
+    slli t0, t0, 1
+    srli t1, t1, 1
+    j mul_loop4
+
+done4:
+########### mul end ###############
+    # mul a1, t0, t1 # load length of array into second arg
     # FIXME: Replace 'mul' with your own implementation
     
     jal argmax
@@ -384,3 +451,6 @@ error_args:
 error_malloc:
     li a0, 26
     j exit
+
+
+
