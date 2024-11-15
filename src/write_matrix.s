@@ -61,6 +61,23 @@ write_matrix:
     li t0, 2
     bne a0, t0, fwrite_error
 
+########### mul start ##############
+    li s4, 0 # s4: store result
+
+mul_loop:
+    beqz s3, done
+    andi t2, s3, 1
+    beqz t2, skip
+    add s4, s4, s2
+
+skip:
+    slli s2, s2, 1
+    srli s3, s3, 1
+    j mul_loop
+
+done:
+########### mul end ###############
+
     # mul s4, s2, s3   # s4 = total elements
     # FIXME: Replace 'mul' with your own implementation
 
@@ -113,3 +130,5 @@ error_exit:
     lw s4, 20(sp)
     addi sp, sp, 44
     j exit
+
+
