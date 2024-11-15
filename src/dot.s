@@ -31,32 +31,47 @@ dot:
     blt a3, t0, error_terminate   
     blt a4, t0, error_terminate  
 
-    li t0, 0            
-    li t1, 0         
+    li t0, 0    # return result      
+    li t1, 0    # loop counter   
+    mv t5, a1  
 
 loop_start:
     bge t1, a2, loop_end
     # TODO: Add your own implementation
 
-
-    mul t2, t1, a3
-    slli t2, t2, 2
+    slli t2, t1, 2
     add t2, a0, t2
     lw t3, 0(t2)
-    beq t3, zero, next_round
-
-    mul t2, t1, a4
-    slli t2, t2, 2
-    add t2, a1, t2
-    lw t4, 0(t2)
+    beq t3, zero, next_round    
+    
+    lw t4, 0(t5)
     beq t4, zero, next_round
 
-    mul t2, t3, t4
+
+    #mul t2, t3, t4
+########### mul start ##############
+    li t2, 0 
+
+mul_loop:
+    beqz t4, done
+    andi t6, t4, 1
+    beqz t6, skip
+    add t2, t2, t3
+
+skip:
+    slli t3, t3, 1
+    srli t4, t4, 1
+    j mul_loop
+
+done:
+########### mul end ###############
 
     add t0, t0, t2
 
 next_round:
     addi t1, t1, 1
+    slli t2, a4, 2
+    add t5, t5, t2
     j loop_start
 
 loop_end:
@@ -72,35 +87,3 @@ set_error_36:
     li a0, 36
     j exit
 
-
-# =======================================================
-# FUNCTION: Multiplication Implementation
-#
-# Performs operation: D = a0 × a1
-# Where:
-#   - a0 is a int
-#   - a1 is a int
-#   - D is a result product
-#
-# Output:
-#   None explicit - Result matrix D populated in-place
-# =======================================================
-multiply:
-    li t0, 0
-    mv t1, a0
-    mv t2, a1
-
-mul_loop:
-    beqz t2, done
-    andi t3, t2, 1
-    beqz t3, skip
-    add t0, t0, t1
-
-skip:
-    slli t1, t1, 1
-    srli t2, t2, 1
-    j mul_loop
-
-done:
-    mv a0, t0
-    jr ra
