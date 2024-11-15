@@ -117,7 +117,27 @@ inner_loop_start:
 inner_loop_end:
     # TODO: Add your own implementation
     addi s0, s0, 1 # outer loop idx ++
-    mul t0, s0, a2
+
+    #mul t0, s0, a2
+########### mul start ##############
+    li t0, 0 
+    mv t3, a2
+    mv t4, s0
+
+mul_loop:
+    beqz t3, done
+    andi t2, t3, 1
+    beqz t2, skip
+    add t0, t0, t4
+
+skip:
+    slli t4, t4, 1
+    srli t3, t3, 1
+    j mul_loop
+
+done:
+########### mul end ###############
+
     slli t0, t0, 2
     add s3, a0, t0 #address of curecnt value of m0
     j outer_loop_start
