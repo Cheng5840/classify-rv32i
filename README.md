@@ -2,8 +2,20 @@
 
 
 ## ABS.s
+==version1==
 In this file, we need to find the absolute value of an integer. 
 Because the absolute value of a number means the distance between the number and zero. So I first check if the input integer is bigger than zero, if it is, we directly return the original value. Otherwise, we use zero to minus the input integer to get the absolute value, and then return.
+
+==version2== !!!
+If you don't want to use any branch to find if the input is negative, we can implement like this way.
+```clike=
+int32_t abs(int32_t x){
+    int32_t mask = (x>>31);
+    return (x+mask) ^ mask;
+}
+```
+But in this way, we cannot handle the edge case, which is `INT32_MIN (-2,147,483,648)`
+
 
 
 ## ARGMAX.s
@@ -24,10 +36,30 @@ And the multiplication of two elements can be simulate in the form of traditiona
 
 
 We will use the same idea to implement every mul instruction in the rest of src files.
+It will be like:
+```
+ #mul t2, t3, t4
+########### mul start ##############
+    li t2, 0 
+
+mul_loop:
+    beqz t4, done
+    andi t6, t4, 1
+    beqz t6, skip
+    add t2, t2, t3
+
+skip:
+    slli t3, t3, 1
+    srli t4, t4, 1
+    j mul_loop
+
+done:
+########### mul end ###############
+```
 
 
 ## Future work
-In this project, every time we meet a mul instruction, we use nearly the same code to replace it. So, we can write a multiply.s to simulte the mul instruction and make code more readable, after this, whenever we meet mul, we just need to jump to multiply to get the product and then return.
+In this project, every time we meet a mul instruction, we use almost the same code to replace it. So, we can write a multiply.s to simulte the mul instruction and make code more readable, after this, whenever we meet mul, we just need to jump to multiply to get the product and then return.
 
 I have tried this, but had some problems with handling the data trasferring (i.e. `sw`, `lw`). To make code more readable, 
 
