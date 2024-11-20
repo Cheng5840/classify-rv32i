@@ -6,7 +6,7 @@ https://hackmd.io/@buobao/classify-rv32i
 In this file, we need to find the absolute value of an integer. 
 Because the absolute value of a number means the distance between the number and zero. So I first check if the input integer is bigger than zero, if it is, we directly return the original value. Otherwise, we use zero to minus the input integer to get the absolute value, and then return.
 
-==version2== !!!
+==version2== 
 If you don't want to use any branch to find if the input is negative, we can implement like this way.
 ```clike=
 int32_t abs(int32_t x){
